@@ -96,12 +96,13 @@ a:hover {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: nowrap;
   overflow-x: auto;
   padding-bottom: 4px;
   scrollbar-width: thin;
   -ms-overflow-style: auto;
+  width: 100%;
 }
 
 .nav-links::-webkit-scrollbar {
@@ -118,11 +119,13 @@ a:hover {
   border-radius: 2px;
 }
 .nav-link {
-  padding: 6px 14px;
-  border-radius: 20px;
+  padding: 4px 12px;
+  border-radius: 16px;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .nav-link:hover {
   color: var(--accent);
