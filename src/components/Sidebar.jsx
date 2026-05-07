@@ -17,6 +17,16 @@ export default function Sidebar() {
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5)
 
+  // 获取学习笔记文章
+  const studyPosts = [...posts]
+    .filter(post => post.category === '学习')
+    .sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1
+      if (!a.pinned && b.pinned) return 1
+      return new Date(b.date) - new Date(a.date)
+    })
+    .slice(0, 5)
+
   return (
     <aside className="sidebar">
       <div className="sidebar-section">
@@ -51,6 +61,28 @@ export default function Sidebar() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="sidebar-section">
+        <h3>📚 学习笔记</h3>
+        <div className="post-list-sidebar">
+          {studyPosts.length > 0 ? studyPosts.map(post => (
+            <div key={post.id} className="sidebar-post-item">
+              <Link to={`/post/${post.id}`} className="sidebar-post-title">
+                {post.pinned && <span className="sidebar-pinned">置顶</span>}
+                {post.title}
+              </Link>
+              <div className="sidebar-meta">
+                <span className="sidebar-date">{post.date}</span>
+                <span className="sidebar-category">学习</span>
+              </div>
+            </div>
+          )) : (
+            <div className="no-posts">
+              <p>暂无学习笔记</p>
+            </div>
+          )}
         </div>
       </div>
 

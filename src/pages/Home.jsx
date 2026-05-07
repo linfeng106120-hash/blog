@@ -1,15 +1,26 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { usePosts } from '../hooks/usePosts'
 import PostCard from '../components/PostCard'
 import CreatePostForm from '../components/CreatePostForm'
-import Sidebar from '../components/Sidebar'
+import PopularPosts from '../components/PopularPosts'
 
 export default function Home() {
-  const { posts } = usePosts()
+  const { posts, updatePost } = usePosts()
   const [search, setSearch] = useState('')
   const [editingPost, setEditingPost] = useState(null)
   const [showCreate, setShowCreate] = useState(false)
   const [currentCategory, setCurrentCategory] = useState('all')
+
+  // 调试：检查posts是否正确加载
+  console.log('Posts loaded:', posts)
+
+  // 监听posts变化，确保界面自动更新
+  useEffect(() => {
+    // 当posts变化时，确保编辑状态被清除
+    if (editingPost && !posts.find(p => p.id === editingPost.id)) {
+      setEditingPost(null)
+    }
+  }, [posts, editingPost])
 
   // 获取所有分类
   const categories = {
@@ -28,24 +39,6 @@ export default function Home() {
   const filtered = useMemo(() => {
     let result = posts
 
-    // 按分类过滤
-    if (currentCategory !== 'all') {
-      const categoryMap = {
-        life: '生活',
-        tech: '技术',
-        study: '学习',
-        moment: '随笔',
-        album: '生活',
-        guestbook: '生活',
-        friends: '技术',
-        about: '生活',
-      }
-      const categoryName = categoryMap[currentCategory]
-      if (categoryName) {
-        result = result.filter(p => p.category === categoryName)
-      }
-    }
-
     // 按搜索过滤
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -62,16 +55,18 @@ export default function Home() {
       if (!a.pinned && b.pinned) return 1
       return new Date(b.date) - new Date(a.date)
     })
-  }, [search, posts, currentCategory])
+  }, [search, posts])
 
   const handleEdit = (post) => {
     setEditingPost(post)
   }
 
-  const handleEditSave = () => {
+  const handleEditSave = (updatedPost) => {
     setEditingPost(null)
-    // 强制刷新列表
-    window.location.reload()
+    // 更新当前编辑的文章，确保界面显示最新状态
+    if (updatedPost) {
+      // 可以在这里添加额外的处理逻辑
+    }
   }
 
   const handleEditCancel = () => {
@@ -142,8 +137,8 @@ export default function Home() {
             )}
           </div>
 
-          {/* Sidebar */}
-          <Sidebar />
+          {/* Popular Posts */}
+          <PopularPosts />
         </div>
 
         {/* Create/Edit Modals */}
